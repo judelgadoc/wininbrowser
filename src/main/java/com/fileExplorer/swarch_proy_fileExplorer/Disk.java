@@ -29,4 +29,16 @@ public class Disk {
         this.name = name;
         this.folders= folders;
     }
+
+    public void setFolders(ArrayList<Folder> folders) {
+        this.folders = folders;
+    }
+
+    public void addToFolders(Folder folder){
+        this.folders.add(folder);
+    }
+
+    public String getName() {
+        return name;
+    }
 }

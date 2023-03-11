@@ -2,20 +2,40 @@ package com.fileExplorer.swarch_proy_fileExplorer;
 
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("disk/")
+@RequestMapping("/disk")
 @AllArgsConstructor
 public class DiskController {
     private final DiskService diskService;
 
-    @GetMapping
+    @GetMapping(value="/all")
     public List<Disk> fetchAllDisks(){
         return diskService.getAllDisks();
     }
+
+    @RequestMapping(value="/new", method = RequestMethod.POST)
+    public String newDisk(@ModelAttribute Disk disk) {
+        ArrayList<Folder> folders = new ArrayList<Folder>();
+        disk.setFolders(folders);
+        diskService.newDisk(disk.getName(), disk);
+        return "Inserted";
+    }
+
+    @RequestMapping(value="/newDisk", method=RequestMethod.POST)
+    public String newFolder(String name,@ModelAttribute Folder folder){
+        //Folder folder = new Folder(new ArrayList<Folder>(),new ArrayList<File>(),name);
+        folder.setFiles(new ArrayList<File>());
+        folder.setFolders(new ArrayList<Folder>());
+        diskService.newFolder("C", folder );
+        return "";
+    }
+
+
 }

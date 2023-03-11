@@ -18,4 +18,12 @@ public class Folder{
         this.size = 0;
         this.name = name;
     }
+
+    public void setFolders(ArrayList<Folder> folders) {
+        this.folders = folders;
+    }
+
+    public void setFiles(ArrayList<File> files) {
+        this.files = files;
+    }
 }
