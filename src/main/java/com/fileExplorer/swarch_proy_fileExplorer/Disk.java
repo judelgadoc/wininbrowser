@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Document
@@ -30,6 +31,23 @@ public class Disk {
         this.folders= folders;
     }
 
+    public ArrayList<String> getFolderNames(){
+        ArrayList<String> names = new ArrayList<>();
+        for (Folder folder : this.folders) {
+            names.add(folder.getName());
+        }
+        return names;
+    }
+
+    public Folder folderByName(String name){
+        for (Folder folder : this.folders) {
+            if (Objects.equals(folder.getName(), name)) {
+                return folder;
+            }
+        }
+        return null;
+    }
+
     public void setFolders(ArrayList<Folder> folders) {
         this.folders = folders;
     }
@@ -41,4 +59,7 @@ public class Disk {
     public String getName() {
         return name;
     }
+
+    public ArrayList<Folder> getFolders() {return folders;}
+
 }

@@ -13,9 +13,11 @@ public interface DiskRepository extends MongoRepository<Disk, String> {
 
     Optional<Disk> findDiskByName(String name);
 
+    @Query("{name:?0}")
+    Disk findDiskByNamed(String name); //Maybe this needs a query
 
     @Query("{name:?0}")
-    Optional<Disk> findByItem(String name);
+    Disk findByFolderName(String name);
 
 
 
