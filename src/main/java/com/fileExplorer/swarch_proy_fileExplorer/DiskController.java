@@ -28,12 +28,12 @@ public class DiskController {
         return "Inserted";
     }
 
-    @RequestMapping(value="/newDisk", method=RequestMethod.POST)
-    public String newFolder(String name,@ModelAttribute Folder folder){
+    @RequestMapping(value="/newFolder", method=RequestMethod.POST)
+    public String newFolder(String diskName,@ModelAttribute Folder folder){
         //Folder folder = new Folder(new ArrayList<Folder>(),new ArrayList<File>(),name);
         folder.setFiles(new ArrayList<File>());
         folder.setFolders(new ArrayList<Folder>());
-        diskService.newFolder("C", folder );
+        diskService.newFolder(diskName, folder );
         return "";
     }
 
