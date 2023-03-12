@@ -29,3 +29,13 @@ ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE clock_db.Timezone (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	name varchar(100) NOT NULL,
+	user_id BIGINT UNSIGNED NOT NULL,
+	CONSTRAINT Timezone_PK PRIMARY KEY (id),
+	CONSTRAINT Timezone_FK FOREIGN KEY (user_id) REFERENCES clock_db.`User`(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
