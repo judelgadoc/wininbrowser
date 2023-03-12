@@ -8,6 +8,8 @@ RUN go build -o wininbrowser_clock_ms
 
 FROM alpine
 
+RUN apk add --no-cache tzdata
+
 WORKDIR /root/
 
 COPY --from=builder /clockms .

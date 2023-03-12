@@ -26,10 +26,10 @@ func (a *Alarm) FromJSON(r io.Reader) error {
 	return e.Decode(a)
 }
 
-func GetAlarms(db *sql.DB) Alarms {
+func GetAlarms(user_id int, db *sql.DB) Alarms {
     var alarms Alarms
-    qry := `SELECT * FROM Alarm`
-    rows, err := db.Query(qry)
+    qry := `SELECT * FROM Alarm WHERE user_id=?`
+    rows, err := db.Query(qry, user_id)
     if err != nil {
         log.Fatal("Can't query DB: ", err)
     }
@@ -52,9 +52,9 @@ func GetAlarms(db *sql.DB) Alarms {
     return alarms
 }
 
-func AddAlarm(a *Alarm, db *sql.DB) {
+func AddAlarm(user_id int, a *Alarm, db *sql.DB) {
     qry := `INSERT INTO Alarm(title, time, user_id) VALUES (?, ?, ?)`
-    res, err := db.Exec(qry, a.Title, a.Time, a.UserID)
+    res, err := db.Exec(qry, a.Title, a.Time, user_id)
     if err != nil {
         log.Fatal("Can't add alarm: ", err)
     }

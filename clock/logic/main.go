@@ -23,22 +23,54 @@ func main() {
     defer db.Close()
 
     ah := handlers.NewAlarms(l, db)
+    th := handlers.NewTimers(l, db)
+    tzh := handlers.NewTimezones(l, db)
 
     sm := mux.NewRouter()
 
-    getRouter := sm.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/alarms", ah.GetAlarms)
-    
-    postRouter := sm.Methods(http.MethodPost).Subrouter()
-	postRouter.HandleFunc("/alarms", ah.AddAlarm)
-    postRouter.Use(ah.MiddlewareValidateAlarm)
 
-    putRouter := sm.Methods(http.MethodPut).Subrouter()
-    putRouter.HandleFunc("/alarms/{id:[0-9]+}", ah.UpdateAlarm)
-    putRouter.Use(ah.MiddlewareValidateAlarm)
+    getRouterAlarms := sm.Methods(http.MethodGet).Subrouter()
+	getRouterAlarms.HandleFunc("/{user_id:[0-9]+}/alarms", ah.GetAlarms)
 
-    deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
-    deleteRouter.HandleFunc("/alarms/{id:[0-9]+}", ah.DeleteAlarm)
+    postRouterAlarms := sm.Methods(http.MethodPost).Subrouter()
+	postRouterAlarms.HandleFunc("/{user_id:[0-9]+}/alarms", ah.AddAlarm)
+    postRouterAlarms.Use(ah.MiddlewareValidateAlarm)
+
+    putRouterAlarms := sm.Methods(http.MethodPut).Subrouter()
+    putRouterAlarms.HandleFunc("/alarms/{id:[0-9]+}", ah.UpdateAlarm)
+    putRouterAlarms.Use(ah.MiddlewareValidateAlarm)
+
+    deleteRouterAlarms := sm.Methods(http.MethodDelete).Subrouter()
+    deleteRouterAlarms.HandleFunc("/alarms/{id:[0-9]+}", ah.DeleteAlarm)
+
+    getRouterTimers := sm.Methods(http.MethodGet).Subrouter()
+	getRouterTimers.HandleFunc("/{user_id:[0-9]+}/timers", th.GetTimers)
+
+    postRouterTimers := sm.Methods(http.MethodPost).Subrouter()
+	postRouterTimers.HandleFunc("/{user_id:[0-9]+}/timers", th.AddTimer)
+    postRouterTimers.Use(th.MiddlewareValidateTimer)
+
+    putRouterTimers := sm.Methods(http.MethodPut).Subrouter()
+    putRouterTimers.HandleFunc("/timers/{id:[0-9]+}", th.UpdateTimer)
+    putRouterTimers.Use(th.MiddlewareValidateTimer)
+
+    deleteRouterTimers := sm.Methods(http.MethodDelete).Subrouter()
+    deleteRouterTimers.HandleFunc("/timers/{id:[0-9]+}", th.DeleteTimer)
+
+    getRouterTimezones := sm.Methods(http.MethodGet).Subrouter()
+	getRouterTimezones.HandleFunc("/{user_id:[0-9]+}/timezones", tzh.GetTimezones)
+	getRouterTimezones.HandleFunc("/timezones", tzh.GetAllTimezones)
+
+    postRouterTimezones := sm.Methods(http.MethodPost).Subrouter()
+	postRouterTimezones.HandleFunc("/{user_id:[0-9]+}/timezones", tzh.AddTimezone)
+    postRouterTimezones.Use(tzh.MiddlewareValidateTimezone)
+
+    putRouterTimezones := sm.Methods(http.MethodPut).Subrouter()
+    putRouterTimezones.HandleFunc("/timezones/{id:[0-9]+}", tzh.UpdateTimezone)
+    putRouterTimezones.Use(tzh.MiddlewareValidateTimezone)
+
+    deleteRouterTimezones := sm.Methods(http.MethodDelete).Subrouter()
+    deleteRouterTimezones.HandleFunc("/timezones/{id:[0-9]+}", tzh.DeleteTimezone)
 
     s := http.Server{
         Addr:         "localhost:9090",  // configure the bind address

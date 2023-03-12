@@ -12,16 +12,16 @@ import (
 )
 
 
-type Alarms struct {
+type Timers struct {
     l *log.Logger
     db *sql.DB
 }
 
-func NewAlarms(l *log.Logger, db *sql.DB) *Alarms {
-    return &Alarms{l, db}
+func NewTimers(l *log.Logger, db *sql.DB) *Timers {
+    return &Timers{l, db}
 }
 
-func (a *Alarms) GetAlarms(rw http.ResponseWriter, r *http.Request) {
+func (t *Timers) GetTimers(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	user_id, err := strconv.Atoi(vars["user_id"])
 	if err != nil {
@@ -29,30 +29,30 @@ func (a *Alarms) GetAlarms(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    a.l.Println("Handle GET Alarms")
+    t.l.Println("Handle GET Timers")
 
-    la := data.GetAlarms(user_id, a.db)
+    lt := data.GetTimers(user_id, t.db)
 
-    err = la.ToJSON(rw)
+    err = lt.ToJSON(rw)
 	if err != nil {
 		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
 	}
 }
 
-func (a *Alarms) AddAlarm(rw http.ResponseWriter, r *http.Request) {
+func (t *Timers) AddTimer(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	user_id, err := strconv.Atoi(vars["user_id"])
 	if err != nil {
 		http.Error(rw, "Unable to convert user id", http.StatusBadRequest)
 		return
 	}
-	a.l.Println("Handle POST Alarm")
+	t.l.Println("Handle POST Timer")
 
-	alarm := r.Context().Value(KeyAlarm{}).(data.Alarm)
-	data.AddAlarm(user_id, &alarm, a.db)
+	timer := r.Context().Value(KeyTimer{}).(data.Timer)
+	data.AddTimer(user_id, &timer, t.db)
 }
 
-func (a Alarms) UpdateAlarm(rw http.ResponseWriter, r *http.Request) {
+func (t Timers) UpdateTimer(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -60,13 +60,13 @@ func (a Alarms) UpdateAlarm(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.l.Println("Handle PUT Alarm", id)
-	alarm := r.Context().Value(KeyAlarm{}).(data.Alarm)
+	t.l.Println("Handle PUT Timer", id)
+	timer := r.Context().Value(KeyTimer{}).(data.Timer)
 
-	data.UpdateAlarm(id, &alarm, a.db)
+	data.UpdateTimer(id, &timer, t.db)
 }
 
-func (a Alarms) DeleteAlarm(rw http.ResponseWriter, r *http.Request) {
+func (t Timers) DeleteTimer(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -74,26 +74,26 @@ func (a Alarms) DeleteAlarm(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.l.Println("Handle DELETE Alarm", id)
+	t.l.Println("Handle DELETE Timer", id)
 
-	data.DeleteAlarm(id, a.db)
+	data.DeleteTimer(id, t.db)
 }
 
-type KeyAlarm struct{}
+type KeyTimer struct{}
 
-func (a Alarms) MiddlewareValidateAlarm(next http.Handler) http.Handler {
+func (t Timers) MiddlewareValidateTimer(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		alarm := data.Alarm{}
+		timer := data.Timer{}
 
-		err := alarm.FromJSON(r.Body)
+		err := timer.FromJSON(r.Body)
 		if err != nil {
-			a.l.Println("[ERROR] deserializing alarm", err)
-			http.Error(rw, "Error reading alarm", http.StatusBadRequest)
+			t.l.Println("[ERROR] deserializing timer", err)
+			http.Error(rw, "Error reading timer", http.StatusBadRequest)
 			return
 		}
 
-		// add the alarm to the context
-		ctx := context.WithValue(r.Context(), KeyAlarm{}, alarm)
+		// add the timer to the context
+		ctx := context.WithValue(r.Context(), KeyTimer{}, timer)
 		r = r.WithContext(ctx)
 
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
