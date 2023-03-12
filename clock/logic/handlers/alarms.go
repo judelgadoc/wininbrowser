@@ -1,6 +1,7 @@
 package handlers
 
 import (
+    "database/sql"
     "context"
     "net/http"
     "log"
@@ -13,16 +14,17 @@ import (
 
 type Alarms struct {
     l *log.Logger
+    db *sql.DB
 }
 
-func NewAlarms(l *log.Logger) *Alarms {
-    return &Alarms{l}
+func NewAlarms(l *log.Logger, db *sql.DB) *Alarms {
+    return &Alarms{l, db}
 }
 
-func (p *Alarms) GetAlarms(rw http.ResponseWriter, r *http.Request) {
-    p.l.Println("Handle GET Alarms")
+func (a *Alarms) GetAlarms(rw http.ResponseWriter, r *http.Request) {
+    a.l.Println("Handle GET Alarms")
 
-    la := data.GetAlarms()
+    la := data.GetAlarms(a.db)
 
     err := la.ToJSON(rw)
 	if err != nil {
@@ -34,7 +36,7 @@ func (a *Alarms) AddAlarm(rw http.ResponseWriter, r *http.Request) {
 	a.l.Println("Handle POST Alarm")
 
 	alarm := r.Context().Value(KeyAlarm{}).(data.Alarm)
-	data.AddAlarm(&alarm)
+	data.AddAlarm(&alarm, a.db)
 }
 
 func (a Alarms) UpdateAlarm(rw http.ResponseWriter, r *http.Request) {
@@ -48,7 +50,7 @@ func (a Alarms) UpdateAlarm(rw http.ResponseWriter, r *http.Request) {
 	a.l.Println("Handle PUT Alarm", id)
 	alarm := r.Context().Value(KeyAlarm{}).(data.Alarm)
 
-	data.UpdateAlarm(id, &alarm)
+	data.UpdateAlarm(id, &alarm, a.db)
 }
 
 func (a Alarms) DeleteAlarm(rw http.ResponseWriter, r *http.Request) {
@@ -61,7 +63,7 @@ func (a Alarms) DeleteAlarm(rw http.ResponseWriter, r *http.Request) {
 
 	a.l.Println("Handle DELETE Alarm", id)
 
-	data.DeleteAlarm(id)
+	data.DeleteAlarm(id, a.db)
 }
 
 type KeyAlarm struct{}

@@ -5,9 +5,6 @@ import (
     "encoding/json"
     "io"
     "log"
-    "os"
-
-    "github.com/go-sql-driver/mysql"
 )
 
 type Alarm struct {
@@ -29,12 +26,7 @@ func (a *Alarm) FromJSON(r io.Reader) error {
 	return e.Decode(a)
 }
 
-func GetAlarms() Alarms {
-    db, err := createConnection()
-    if err != nil {
-        log.Fatal("Can't create connection: ", err)
-    }
-    defer db.Close()
+func GetAlarms(db *sql.DB) Alarms {
     var alarms Alarms
     qry := `SELECT * FROM Alarm`
     rows, err := db.Query(qry)
@@ -60,12 +52,7 @@ func GetAlarms() Alarms {
     return alarms
 }
 
-func AddAlarm(a *Alarm) {
-    db, err := createConnection()
-    if err != nil {
-        log.Fatal("Can't create connection: ", err)
-    }
-    defer db.Close()
+func AddAlarm(a *Alarm, db *sql.DB) {
     qry := `INSERT INTO Alarm(title, time, user_id) VALUES (?, ?, ?)`
     res, err := db.Exec(qry, a.Title, a.Time, a.UserID)
     if err != nil {
@@ -78,12 +65,7 @@ func AddAlarm(a *Alarm) {
     log.Println("Added alarm: ", count)
 }
 
-func UpdateAlarm(id int, a *Alarm) {
-    db, err := createConnection()
-    if err != nil {
-        log.Fatal("Can't create connection: ", err)
-    }
-    defer db.Close()
+func UpdateAlarm(id int, a *Alarm, db *sql.DB) {
     qry := `UPDATE Alarm SET title=?, time=? WHERE id=?`
     res, err := db.Exec(qry, a.Title, a.Time, id)
     if err != nil {
@@ -96,12 +78,7 @@ func UpdateAlarm(id int, a *Alarm) {
     log.Println("Updated alarm: ", count)
 }
 
-func DeleteAlarm(id int) {
-    db, err := createConnection()
-    if err != nil {
-        log.Fatal("Can't create connection: ", err)
-    }
-    defer db.Close()
+func DeleteAlarm(id int, db *sql.DB) {
     qry := `DELETE FROM Alarm WHERE id=?`
     res, err := db.Exec(qry, id)
     if err != nil {
@@ -113,26 +90,3 @@ func DeleteAlarm(id int) {
     }
     log.Println("Deleted alarm: ", count)
 }
-
-func createConnection() (*sql.DB, error) {
-    cfg := mysql.Config{
-        User:   os.Getenv("DBUSER"),
-        Passwd: os.Getenv("DBPASS"),
-        Net:    "tcp",
-        Addr:   os.Getenv("DBHOST") + ":3306",
-        DBName: "clock_db",
-        AllowNativePasswords: true,
-    }
-
-    db, err := sql.Open("mysql", cfg.FormatDSN())
-    if err != nil {
-        log.Fatal("Can't open DB: ", err)
-    }
-
-    err = db.Ping()
-    if err != nil {
-        log.Fatal("Can't ping DB: ", err)
-    }
-    return db, err
-}
-
