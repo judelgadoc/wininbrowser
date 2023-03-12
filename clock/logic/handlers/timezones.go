@@ -40,6 +40,13 @@ func (t *Timezones) GetTimezones(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (t *Timezones) GetAllTimezones(rw http.ResponseWriter, r *http.Request) {
+    t.l.Println("Handle GET All Timezones")
+
+    lt := data.GetAllTimezones()
+    err := lt.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
+	}
 }
 
 func (t *Timezones) AddTimezone(rw http.ResponseWriter, r *http.Request) {

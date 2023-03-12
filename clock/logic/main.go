@@ -73,7 +73,7 @@ func main() {
     deleteRouterTimezones.HandleFunc("/timezones/{id:[0-9]+}", tzh.DeleteTimezone)
 
     s := http.Server{
-        Addr:         "localhost:9090",  // configure the bind address
+        Addr:         ":9090",  // configure the bind address
 		Handler:      sm,                // set the default handler
 		ErrorLog:     l,                 // set the logger for the server
 		ReadTimeout:  5 * time.Second,   // max time to read request from the client

@@ -16,8 +16,4 @@ COPY --from=builder /clockms .
 
 EXPOSE 9090
 
-ENV DBHOST=
-ENV DBUSER=
-ENV DBPASS=
-
 CMD ["./wininbrowser_clock_ms"]

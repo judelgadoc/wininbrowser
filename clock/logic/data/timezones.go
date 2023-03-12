@@ -5,12 +5,14 @@ import (
     "encoding/json"
     "io"
     "log"
+
+    "zgo.at/tz"
 )
 
 type Timezone struct {
-    ID     int     `json:"id"`
+    ID     int     `json:"id,omitempty"`
     Name   string  `json:"name"`
-    UserID int     `json:"userId`
+    UserID int     `json:"userId,omitempty"`
 }
 
 type Timezones []*Timezone
@@ -45,7 +47,16 @@ func GetTimezones(user_id int, db *sql.DB) Timezones {
         }
         t := Timezone{id, name, userid}
         timezones = append(timezones, &t)
+    }
+    return timezones
+}
 
+func GetAllTimezones() Timezones {
+    var timezones Timezones
+    for _, z := range tz.Zones {
+        var t Timezone
+        t.Name = z.Zone
+        timezones = append(timezones, &t)
     }
     return timezones
 }
