@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
@@ -57,7 +58,7 @@ public class DiskService {
             folder.setFolders(folders);
             folder.setFiles(files);
             disk.addToFolders(folder);
-            folderRepository.save(folder);
+            //folderRepository.save(folder);
             mongoOperations.save(disk);
         }else{
             throw new IllegalStateException("There's already a folder with this name here");
@@ -72,5 +73,12 @@ public class DiskService {
         //diskRepository.findBy({ name:"C" });
         //diskRepository.save();*/
         return "";
+    }
+
+    public ArrayList<Folder> getFolders(String diskName){
+
+        Disk disk = diskRepository.findDiskByNamed(diskName);
+
+        return disk.getFolders();
     }
 }

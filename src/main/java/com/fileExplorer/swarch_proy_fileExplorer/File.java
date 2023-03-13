@@ -17,27 +17,28 @@ public class File{
     private String type;
     private String name;
     private double size;
-    //private Binary file;
+    private Binary fileData;
 
+    /*
     public File(String type, String name, double size) {
         this.type = type;
         this.name = name;
         this.size = size;
-    }
+    }*/
 
-    /*
-    public File(String type) throws IOException {
+
+    public File(MultipartFile file) throws IOException {
         this.type = file.getContentType();
         this.name = file.getOriginalFilename();
         this.size = file.getSize();
         //this.file = new Binary(BsonBinarySubType.BINARY, file.getBytes());
-    }*/
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setFile(Binary file) {
-        //this.file = file;
+    public void setFileData(Binary file) {
+        this.fileData = file;
     }
 }

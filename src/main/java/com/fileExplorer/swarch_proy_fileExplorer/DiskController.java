@@ -37,5 +37,9 @@ public class DiskController {
         return "";
     }
 
+    @RequestMapping(value = "/getFolders", method = RequestMethod.GET)
+    public List<Folder> getFolders(String diskName){
+        return diskService.getFolders(diskName);
+    }
 
 }

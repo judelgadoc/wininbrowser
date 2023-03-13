@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -46,7 +47,7 @@ public class FolderService {
             folder.setFolders(folders);
             folder.setFiles(files);
             folder1.addToFolders(folder);
-            folderRepository.save(folder1);
+            //folderRepository.save(folder1);
             mongoOperations.save(disk);
 
         }else{
@@ -56,9 +57,9 @@ public class FolderService {
         return "";
     }
 
-    public String newFile(String diskName, String route, File newFile) throws IOException{
-        //File newFile = new File(file);
-        //newFile.setFile(new Binary(BsonBinarySubType.BINARY,file.getBytes()));
+    public String newFile(String diskName, String route, MultipartFile file) throws IOException{
+        File newFile = new File(file);
+        newFile.setFileData(new Binary(BsonBinarySubType.BINARY,file.getBytes()));
         System.out.println(newFile);
         //fileRepository.insert(newFile);
 
@@ -75,11 +76,24 @@ public class FolderService {
         if(!folder1.getFileNames().contains(newFile.getName())){
 
             folder1.addToFiles(newFile);
-            folderRepository.save(folder1);
+            //folderRepository.save(folder1);
             mongoOperations.save(disk);
         }else{
             throw new IllegalStateException("There's already a file with this name here");
         }
         return "";
+    }
+
+    public ArrayList<Folder> getFolders(String diskName, String route){
+        ArrayList<String> foldersList = new ArrayList<>(Arrays.asList(route.split("/")));
+
+        Disk disk = diskRepository.findDiskByNamed(diskName);
+        Folder folder1 = disk.folderByName(foldersList.get(0));
+
+        for(int i = 1; i< foldersList.size(); i++){
+            folder1 = folder1.folderByName(foldersList.get(i));
+        }
+
+        return folder1.getFolders();
     }
 }

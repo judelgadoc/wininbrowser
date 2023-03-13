@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/folder")
@@ -15,7 +16,7 @@ public class FolderController {
 
     private final FolderService folderService;
 
-    @RequestMapping(value = "/newFolder", method = RequestMethod.POST)
+    @RequestMapping(value = "/newFolder", method = RequestMethod.PUT)
     public String newFolder(String diskName,String route, @ModelAttribute Folder folder){
         ArrayList<Folder> folders = new ArrayList<Folder>();
         folder.setFolders(folders);
@@ -23,11 +24,16 @@ public class FolderController {
         return "";
     }
 
-    @RequestMapping(value = "/newFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/newFile", method = RequestMethod.PUT)
     //@RequestParam("newFile") MultipartFile newFile
-    public String newFile(String diskName, String route,@ModelAttribute File newFile) throws IOException {
+    public String newFile(String diskName, String route,@RequestParam("newFile") MultipartFile newFile) throws IOException {
         System.out.println(newFile);
         folderService.newFile(diskName, route, newFile);
         return "";
+    }
+
+    @RequestMapping(value = "/getFolders", method = RequestMethod.GET)
+    public List<Folder> getFolders(String diskName, String route){
+        return folderService.getFolders(diskName, route);
     }
 }
