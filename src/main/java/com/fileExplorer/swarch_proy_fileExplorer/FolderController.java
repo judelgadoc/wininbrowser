@@ -26,14 +26,19 @@ public class FolderController {
 
     @RequestMapping(value = "/newFile", method = RequestMethod.PUT)
     //@RequestParam("newFile") MultipartFile newFile
-    public String newFile(String diskName, String route,@RequestParam("newFile") MultipartFile newFile) throws IOException {
-        System.out.println(newFile);
-        folderService.newFile(diskName, route, newFile);
+    public String newFile(String diskName, String route, String type, String name, double size) throws IOException {
+        //System.out.println(newFile);
+        folderService.newFile(diskName, route, type, name, size);
         return "";
     }
 
     @RequestMapping(value = "/getFolders", method = RequestMethod.GET)
     public List<Folder> getFolders(String diskName, String route){
         return folderService.getFolders(diskName, route);
+    }
+
+    @RequestMapping(value = "/getFiles", method = RequestMethod.GET)
+    public List<File> getFiles(String diskName, String route){
+        return folderService.getFiles(diskName, route);
     }
 }

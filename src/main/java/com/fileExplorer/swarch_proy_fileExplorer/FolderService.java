@@ -57,9 +57,9 @@ public class FolderService {
         return "";
     }
 
-    public String newFile(String diskName, String route, MultipartFile file) throws IOException{
-        File newFile = new File(file);
-        newFile.setFileData(new Binary(BsonBinarySubType.BINARY,file.getBytes()));
+    public String newFile(String diskName, String route, String type, String name, double size) throws IOException{
+        File newFile = new File(type, name, size);
+        //newFile.setFileData(new Binary(BsonBinarySubType.BINARY,file.getBytes()));
         System.out.println(newFile);
         //fileRepository.insert(newFile);
 
@@ -95,5 +95,18 @@ public class FolderService {
         }
 
         return folder1.getFolders();
+    }
+
+    public ArrayList<File> getFiles(String diskName, String route){
+        ArrayList<String> foldersList = new ArrayList<>(Arrays.asList(route.split("/")));
+
+        Disk disk = diskRepository.findDiskByNamed(diskName);
+        Folder folder1 = disk.folderByName(foldersList.get(0));
+
+        for(int i = 1; i< foldersList.size(); i++){
+            folder1 = folder1.folderByName(foldersList.get(i));
+        }
+
+        return folder1.getFiles();
     }
 }
