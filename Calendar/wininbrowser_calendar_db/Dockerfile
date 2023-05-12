@@ -1,0 +1,8 @@
+FROM mysql:latest
+
+ENV MYSQL_ROOT_PASSWORD=Fredy9411
+ENV MYSQL_DATABASE=wininbrowser_calendar_db
+ENV MYSQL_USER=fredy
+ENV MYSQL_PASSWORD=Fredy9411
+
+EXPOSE 3307
