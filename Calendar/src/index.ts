@@ -3,10 +3,10 @@ import express, { Request, Response } from 'express';
 // Configuración de la conexión a la base de datos MySQL
 const db = mysql.createPool({
   connectionLimit : 10,
-  host     : '192.168.10.31',
-  port     :  3306,
+  host     : '172.17.0.1',
+  port     :  65001,
   user     : 'fredy',
-  password : 'Fredy9411',
+  password : '12345',
   database : 'wininbrowser_calendar_db',
   debug    :  false
 });
