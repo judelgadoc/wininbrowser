@@ -1,0 +1,11 @@
+"ls": listar el contenido del directorio actual.
+"pwd": mostrar el directorio actual.
+"mkdir": crear un directorio.
+"rmdir": eliminar un directorio.
+"touch": crear un archivo vacío.
+"rm": eliminar un archivo.
+"help": mostrar una lista de comandos disponibles.
+"cd": cambiar el directorio actual.
+"mv": mover o renombrar archivos.
+"cp": copiar archivos.
+"history": mostrar el historial de comandos.
