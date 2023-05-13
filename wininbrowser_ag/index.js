@@ -11,7 +11,59 @@ const root = {
     const data = await response.json();
     return data.map((timezone) => ({ name: timezone.name }));
   },
-  aguacates: async () => {
+  alarms: async ({ user_id }) => {
+    const response = await fetch(`http://172.17.0.1:9090/${user_id}/alarms`);
+    const data = await response.json();
+      if (data === null) 
+        return [{}]
+      else
+        return data.map((alarm) => ({ id: alarm.id, title: alarm.title, time: alarm.time }));
+  },
+  createAlarm: async ({ user_id, newTitle, newTime }) => {
+    const body = {title: newTitle, time: newTime}
+      console.log(user_id)
+      console.log(body)
+      console.log(JSON.stringify(body))
+    const response = await fetch(`http://172.17.0.1:9090/${user_id}/alarms`, {
+        method: 'post',
+        body: JSON.stringify(body),
+	    headers: {'Content-Type': 'application/json'}
+    });
+      if (response.status === 200) 
+        return "Alarm added successfully"
+      else
+        return "Error adding alarm"
+  },
+  deleteAlarm: async ({ alarm_id }) => {
+    const response = await fetch(`http://172.17.0.1:9090/alarms/${alarm_id}`, {
+        method: 'delete'
+    });
+      if (response.status === 200) 
+        return "Alarm deleted successfully"
+      else
+        return "Error deleting alarm"
+  },
+  updateAlarm: async ({ alarm_id, newTitle, newTime }) => {
+    const body = {title: newTitle, time: newTime}
+    const response = await fetch(`http://172.17.0.1:9090/alarms/${alarm_id}`, {
+        method: 'put',
+        body: JSON.stringify(body),
+	    headers: {'Content-Type': 'application/json'}
+    });
+      if (response.status === 200) 
+        return "Alarm updated successfully"
+      else
+        return "Error updating alarm"
+  },
+  timers: async ({ user_id }) => {
+    const response = await fetch(`http://172.17.0.1:9090/${user_id}/timers`);
+    const data = await response.json();
+      if (data === null) 
+        return [{}]
+      else
+        return data.map((timers) => ({ id: timer.id, time: timer.time }));
+  },
+  events: async () => {
     const response = await fetch('http://172.17.0.1:3000/events');
     const data = await response.json();
     return data.map((event_) => ({ title: event_.title, description: event_, start: event_.start, end: event_.end, allDay: event_.allDay, location: event_.location}));

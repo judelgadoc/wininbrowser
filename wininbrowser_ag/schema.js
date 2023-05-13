@@ -5,6 +5,17 @@ const schema = buildSchema(`
     name: String
   }
 
+  type Alarm {
+    id: Int
+    title: String
+    time: String
+  }
+
+  type Timer {
+    id: Int
+    time: String
+  }
+
   type Event {
     title: String
     description: String
@@ -16,7 +27,14 @@ const schema = buildSchema(`
 
   type Query {
     timezones: [Timezone]
+    alarms(user_id: Int!): [Alarm]
     events: [Event]
+  }
+
+  type Mutation {
+    createAlarm(user_id: Int!, newTitle: String, newTime: String): String
+    deleteAlarm(alarm_id: Int!): String
+    updateAlarm(alarm_id: Int!, newTitle: String, newTime: String): String
   }
 `);
 

@@ -25,6 +25,7 @@ func main() {
     ah := handlers.NewAlarms(l, db)
     th := handlers.NewTimers(l, db)
     tzh := handlers.NewTimezones(l, db)
+    uh := handlers.NewUsers(l, db)
 
     sm := mux.NewRouter()
 
@@ -71,6 +72,12 @@ func main() {
 
     deleteRouterTimezones := sm.Methods(http.MethodDelete).Subrouter()
     deleteRouterTimezones.HandleFunc("/timezones/{id:[0-9]+}", tzh.DeleteTimezone)
+
+    postRouterUsers := sm.Methods(http.MethodPost).Subrouter()
+	postRouterUsers.HandleFunc("/users/{user_id:[0-9]+}", uh.AddUser)
+
+    deleteRouterUsers := sm.Methods(http.MethodDelete).Subrouter()
+    deleteRouterUsers.HandleFunc("/users/{user_id:[0-9]+}", uh.DeleteUser)
 
     s := http.Server{
         Addr:         ":9090",  // configure the bind address

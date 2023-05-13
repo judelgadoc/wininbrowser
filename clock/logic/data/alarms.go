@@ -90,3 +90,4 @@ func DeleteAlarm(id int, db *sql.DB) {
     }
     log.Println("Deleted alarm: ", count)
 }
+

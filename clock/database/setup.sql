@@ -1,5 +1,5 @@
 CREATE TABLE clock_db.`User` (
-	id BIGINT UNSIGNED auto_increment NOT NULL,
+	id BIGINT UNSIGNED NOT NULL,
 	CONSTRAINT User_PK PRIMARY KEY (id)
 )
 ENGINE=InnoDB
