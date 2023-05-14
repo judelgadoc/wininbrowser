@@ -1,0 +1,27 @@
+mutation {
+  createAlarm(user_id: 2, newTitle: "Alarma GraphQL2", newTime: "2023-01-21 12:30:00")
+}
+
+query {
+  alarms(user_id: 1) {
+    id
+    title
+    time
+  }
+}
+
+mutation {
+  deleteAlarm(alarm_id: 7)
+}
+
+mutation {
+  updateAlarm(alarm_id: 6, newTitle: "Alarma GraphQL Mod", newTime: "2023-01-21 12:30:00")
+}
+
+mutation {
+  createUser(user_id: 110, username: "abcd", fullname: "Abecedario", hashed_password: "Not really hashed")
+}
+
+mutation {
+  deleteUser(user_id: 110)
+}

@@ -1,6 +1,12 @@
 const { buildSchema } = require('graphql');
 
 const schema = buildSchema(`
+  type User {
+    fullname: String
+    username: String
+    id: Int
+  }
+
   type Timezone {
     name: String
   }
@@ -32,6 +38,8 @@ const schema = buildSchema(`
   }
 
   type Mutation {
+    createUser(user_id: Int, username: String, fullname: String, hashed_password: String): String
+    deleteUser(user_id: Int): String
     createAlarm(user_id: Int!, newTitle: String, newTime: String): String
     deleteAlarm(alarm_id: Int!): String
     updateAlarm(alarm_id: Int!, newTitle: String, newTime: String): String

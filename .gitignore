@@ -1,9 +1,9 @@
 HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+fileExplorer/.gradle
+fileExplorer/build/
+fileExplorer/!gradle/wrapper/gradle-wrapper.jar
+fileExplorer/!**/src/main/**/build/
+fileExplorer/!**/src/test/**/build/
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -35,12 +35,6 @@ go.work
 clock/logic/env.list
 clock/database/env.list
 
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
 ### STS ###
 .apt_generated
 .classpath
@@ -71,3 +65,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Authentication (Python FastAPI)
+authentication/logic/env
+authentication/logic/__pycache__
