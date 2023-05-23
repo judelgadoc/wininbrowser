@@ -17,7 +17,6 @@ RUN npm install nodemon
 RUN npm install @types/body-parser
 RUN npm install @types/cors
 
-# Copiar el resto de archivos
 COPY . .
 
 # Exponer el puerto

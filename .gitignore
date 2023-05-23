@@ -69,3 +69,4 @@ out/
 # Authentication (Python FastAPI)
 authentication/logic/env
 authentication/logic/__pycache__
+*/node_modules

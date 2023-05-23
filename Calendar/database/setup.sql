@@ -1,8 +1,7 @@
 create database wininbrowser_calendar_db;
 use wininbrowser_calendar_db;
 CREATE TABLE users (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(255) NOT NULL UNIQUE
+  id INT NOT NULL PRIMARY KEY
 );
 CREATE TABLE events (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
