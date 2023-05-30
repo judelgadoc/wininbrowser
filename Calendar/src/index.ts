@@ -136,6 +136,19 @@ app.get('/events', async (req: Request, res: Response) => {
     }
 });
 
+// Ruta para obtener todos los eventos de un usuario
+app.get('/:userId/events/', async (req: Request, res: Response) => {
+    try {
+        const {
+            userId
+        } = req.params;
+        const events = await getAllEventsByUserId(parseInt(userId));
+        res.json(events);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 
 // Ruta para crear un nuevo evento
 app.post('/events', async (req: Request, res: Response) => {
@@ -242,6 +255,20 @@ app.listen(3000, () => {
 function getAllEvents() {
     return new Promise((resolve, reject) => {
         const sql = 'SELECT * FROM events';
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al obtener eventos: ', err);
+                return reject(err);
+            }
+            return resolve(result);
+        });
+    });
+}
+
+// Función para obtener todos los eventos de un usuario
+function getAllEventsByUserId(userId: number) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM events JOIN (SELECT eventId FROM participants WHERE userId = ${userId}) AS usr ON id = usr.eventId`;
         db.query(sql, (err, result) => {
             if (err) {
                 console.error('Error al obtener eventos: ', err);

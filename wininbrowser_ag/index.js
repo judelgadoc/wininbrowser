@@ -72,6 +72,23 @@ const root = {
         const data = await response.json();
         return data
     },
+    users: async () => {
+        const response = await fetch(`http://host.docker.internal:8000/users`);
+        const data = await response.json();
+        if (data === null)
+            return [{}]
+        else
+            return data.map((u) => ({
+                username: u.username,
+                fullname: u.fullname,
+                id: u.id
+            }));
+    },
+    userById: async ( {user_id} ) => {
+        const response = await fetch(`http://host.docker.internal:8000/users/${user_id}`);
+        const data = await response.json();
+        return data
+    },
     timezones: async () => {
         const response = await fetch('http://host.docker.internal:9090/timezones');
         const data = await response.json();
@@ -194,6 +211,36 @@ const root = {
         const response = await fetch('http://host.docker.internal:3000/events');
         const data = await response.json();
         return data.map((event_) => ({
+            id: event_.id,
+            title: event_.title,
+            description: event_.description,
+            start: event_.start,
+            end: event_.end,
+            allDay: event_.allDay,
+            location: event_.location
+        }));
+    },
+    eventsByUserId: async ( {user_id} ) => {
+        const response = await fetch(`http://host.docker.internal:3000/${user_id}/events`);
+        const data = await response.json();
+        return data.map((event_) => ({
+            id: event_.id,
+            title: event_.title,
+            description: event_.description,
+            start: event_.start,
+            end: event_.end,
+            allDay: event_.allDay,
+            location: event_.location
+        }));
+    },
+    eventsByUsername: async ( {username} ) => {
+        const response0 = await fetch(`http://host.docker.internal:8000/usernames/${username}`);
+        const data0 = await response0.json();
+        console.log(data0)
+        const user_id = data0.id;
+        const response1 = await fetch(`http://host.docker.internal:3000/${user_id}/events`);
+        const data1 = await response1.json();
+        return data1.map((event_) => ({
             id: event_.id,
             title: event_.title,
             description: event_.description,

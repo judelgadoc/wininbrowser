@@ -56,7 +56,11 @@ const schema = buildSchema(`
   type Query {
     timezones: [Timezone]
     alarms(user_id: Int!): [Alarm]
+    users: [User]
+    userById(user_id: Int!): User
     events: [Event]
+    eventsByUserId(user_id: Int!): [Event]
+    eventsByUsername(username: String!): [Event]
     disks: [Disk]
     foldersFromFolder(diskName: String!, route: String!): [Folder]
     filesFromFolder(diskName:String!, route: String!): [File]
