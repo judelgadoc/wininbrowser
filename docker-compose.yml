@@ -1,14 +1,18 @@
 version: "3.0"
 services:
   wininbrowser_authentication_db:
+    hostname: wininbrowser_authentication_db
     build:
       context: ./authentication/database
       dockerfile: Dockerfile
     container_name: wininbrowser_authentication_db
     ports:
       - 55000:3306
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_clock_db:
+    hostname: wininbrowser_clock_db
     build:
       context: ./clock/database
       dockerfile: Dockerfile
@@ -17,16 +21,22 @@ services:
       - ./clock/database/env.list
     ports:
       - 3306:3306
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_calendar_db:
+    hostname: wininbrowser_calendar_db
     build:
       context: ./Calendar/database
       dockerfile: Dockerfile
     container_name: wininbrowser_calendar_db
     ports:
       - 65001:3306
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_authentication_ms:
+    hostname: wininbrowser_authentication_ms
     build:
       context: ./authentication/logic
       dockerfile: Dockerfile
@@ -35,8 +45,11 @@ services:
       - 8000:8000
     depends_on:
       - wininbrowser_authentication_db
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_clock_ms:
+    hostname: wininbrowser_clock_ms
     build:
       context: ./clock/logic
       dockerfile: Dockerfile
@@ -47,8 +60,11 @@ services:
       - 9090:9090
     depends_on:
       - wininbrowser_clock_db
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_calendar_ms:
+    hostname: wininbrowser_calendar_ms
     build:
       context: ./Calendar
       dockerfile: Dockerfile
@@ -57,18 +73,26 @@ services:
       - 3000:3000
     depends_on:
       - wininbrowser_calendar_db
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_mq:
+    hostname: wininbrowser_mq
     image: rabbitmq:3-alpine
     container_name: wininbrowser_mq
     ports:
       - 5672:5672
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_ag:
+    hostname: wininbrowser_ag
     build:
       context: ./wininbrowser_ag
       dockerfile: Dockerfile
     container_name: wininbrowser_ag
     ports:
       - 4000:4000
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     restart: unless-stopped

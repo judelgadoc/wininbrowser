@@ -15,7 +15,7 @@ import (
 
 
 func main() {
-    l := log.New(os.Stdout, "clock", log.LstdFlags)
+    l := log.New(os.Stdout, "", log.LstdFlags)
     db, err := createConnection()
     if err != nil {
         log.Fatal("Can't create connection: ", err)

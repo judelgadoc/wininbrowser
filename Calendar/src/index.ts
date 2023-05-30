@@ -10,7 +10,7 @@ import * as amqp from 'amqplib/callback_api';
 // Configuración de la conexión a la base de datos MySQL
 const db = mysql.createPool({
     connectionLimit: 10,
-    host: '172.17.0.1',
+    host: 'host.docker.internal',
     port: 65001,
     user: 'fredy',
     password: '12345',
@@ -40,50 +40,7 @@ function generateUuid() {
 
 function mqGetEventsClient() {
     let str : string;
-    amqp.connect('amqp://172.17.0.1', function(error0, connection) {
-        if (error0) {
-            throw error0;
-        }
-        connection.createChannel(function(error1, channel) {
-            if (error1) {
-                throw error1;
-            }
-
-            var queue = 'calendar_queue';
-
-            channel.assertQueue('', {
-                exclusive: true
-            },  function(error2, q) {
-                if (error2) {
-                    throw error2;
-                }
-                var correlationId = generateUuid();
-                console.log(" [*] Waiting for messages in %s. Get", queue);
-
-                channel.consume(q.queue, function(msg) {
-                    if (msg !== null && msg !== undefined) {
-                        if (msg.properties.correlationId == correlationId) {
-                            console.log(" [x] Received %s", msg.content.toString());
-                            str = msg.content.toString();
-
-                        }
-                    }
-                }, {
-                    noAck: true
-                });
-                const ans = getAllEvents();
-                channel.sendToQueue('calendar_queue',
-                Buffer.from(JSON.stringify(ans)), {
-                    correlationId: correlationId,
-                    replyTo: q.queue
-                });
-            });
-        });
-    });
-}
-
-function mqCreateEventClient() {
-    amqp.connect('amqp://172.17.0.1', function(error0, connection) {
+    amqp.connect('amqp://host.docker.internal', function(error0, connection) {
         if (error0) {
             throw error0;
         }
@@ -101,14 +58,57 @@ function mqCreateEventClient() {
                     throw error2;
                 }
                 var correlationId = generateUuid();
-                console.log(" [*] Waiting for messages in %s. Create", queue);
+
+                channel.consume(q.queue, function(msg) {
+                    if (msg !== null && msg !== undefined) {
+                        if (msg.properties.correlationId == correlationId) {
+                            console.log(" [x] Received %s", msg.content.toString());
+                            str = msg.content.toString();
+
+                        }
+                    }
+                }, {
+                    noAck: true
+                });
+                const myans = await getAllEvents();
+                
+                channel.sendToQueue('calendar_queue',
+                Buffer.from(JSON.stringify(myans)), {
+                    correlationId: correlationId,
+                    replyTo: q.queue
+                });
+                console.log(" [x] Sent: ", JSON.stringify(myans))
+            });
+        });
+    });
+}
+
+function mqCreateEventClient() {
+    amqp.connect('amqp://host.docker.internal', function(error0, connection) {
+        if (error0) {
+            throw error0;
+        }
+        connection.createChannel(function(error1, channel) {
+            if (error1) {
+                throw error1;
+            }
+
+            var queue = 'calendar_queue';
+
+            channel.assertQueue('', {
+                exclusive: true
+            },  async function(error2, q) {
+                if (error2) {
+                    throw error2;
+                }
+                var correlationId = generateUuid();
 
                 channel.consume(q.queue, async function(msg) {
                     if (msg !== null && msg !== undefined) {
                         if (msg.properties.correlationId == correlationId) {
                             console.log(" [x] Received %s", msg.content.toString());
                             const data = JSON.parse(msg.content.toString());
-                            const ans = await createEvent(data.title, data.description, data.start, data.end, data.allDay, data.location, data.userId);
+                            //const ans = await createEvent(data.title, data.description, data.start, data.end, data.allDay, data.location, data.userId);
                         }
                     }
                 }, {
@@ -119,6 +119,7 @@ function mqCreateEventClient() {
                     correlationId: correlationId,
                     replyTo: q.queue
                 });
+                console.log(" [x] Sent create");
             });
         });
     });
@@ -129,6 +130,7 @@ app.get('/events', async (req: Request, res: Response) => {
     try {
         const events = await getAllEvents();
         res.json(events);
+        mqGetEventsClient()
     } catch (error) {
         res.status(500).send(error);
     }
@@ -361,5 +363,5 @@ function deleteParticipant(id: number) {
 }
 
 
-mqGetEventsClient()
-mqCreateEventClient()
+//mqGetEventsClient()
+//mqCreateEventClient()

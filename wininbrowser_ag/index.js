@@ -22,17 +22,17 @@ const root = {
             fullname: fullname,
             password: hashed_password
         }
-        const response0 = await fetch(`http://172.17.0.1:8000/users`, {
+        const response0 = await fetch(`http://host.docker.internal:8000/users`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const response1 = await fetch(`http://172.17.0.1:9090/users/${user_id}`, {
+        const response1 = await fetch(`http://host.docker.internal:9090/users/${user_id}`, {
             method: 'post',
         });
-        const response2 = await fetch(`http://172.17.0.1:3000/users/${user_id}`, {
+        const response2 = await fetch(`http://host.docker.internal:3000/users/${user_id}`, {
             method: 'post',
         });
         if ((response0.status === 200) && (response1.status === 200) && (response2.status === 200))
@@ -43,13 +43,13 @@ const root = {
     deleteUser: async ({
         user_id
     }) => {
-        const response0 = await fetch(`http://172.17.0.1:8000/users/${user_id}`, {
+        const response0 = await fetch(`http://host.docker.internal:8000/users/${user_id}`, {
             method: 'delete'
         });
-        const response1 = await fetch(`http://172.17.0.1:9090/users/${user_id}`, {
+        const response1 = await fetch(`http://host.docker.internal:9090/users/${user_id}`, {
             method: 'delete'
         });
-        const response2 = await fetch(`http://172.17.0.1:3000/users/${user_id}`, {
+        const response2 = await fetch(`http://host.docker.internal:3000/users/${user_id}`, {
             method: 'delete'
         });
         if ((response0.status === 200) && (response1.status === 200) && (response2.status === 200))
@@ -57,8 +57,23 @@ const root = {
         else
             return "Error deleting user"
     },
+    getToken: async ({username, password}) => {
+        const response = await fetch(`http://host.docker.internal:8000/token`, {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'accept': 'application/json'
+            },
+            body: new URLSearchParams({
+                'username': username,
+                'password': password,
+              })
+        });
+        const data = await response.json();
+        return data
+    },
     timezones: async () => {
-        const response = await fetch('http://172.17.0.1:9090/timezones');
+        const response = await fetch('http://host.docker.internal:9090/timezones');
         const data = await response.json();
         return data.map((timezone) => ({
             name: timezone.name
@@ -67,7 +82,7 @@ const root = {
     alarms: async ({
         user_id
     }) => {
-        const response = await fetch(`http://172.17.0.1:9090/${user_id}/alarms`);
+        const response = await fetch(`http://host.docker.internal:9090/${user_id}/alarms`);
         const data = await response.json();
         if (data === null)
             return [{}]
@@ -87,10 +102,7 @@ const root = {
             title: newTitle,
             time: newTime
         }
-        console.log(user_id)
-        console.log(body)
-        console.log(JSON.stringify(body))
-        const response = await fetch(`http://172.17.0.1:9090/${user_id}/alarms`, {
+        const response = await fetch(`http://host.docker.internal:9090/${user_id}/alarms`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -105,7 +117,7 @@ const root = {
     deleteAlarm: async ({
         alarm_id
     }) => {
-        const response = await fetch(`http://172.17.0.1:9090/alarms/${alarm_id}`, {
+        const response = await fetch(`http://host.docker.internal:9090/alarms/${alarm_id}`, {
             method: 'delete'
         });
         if (response.status === 200)
@@ -122,7 +134,7 @@ const root = {
             title: newTitle,
             time: newTime
         }
-        const response = await fetch(`http://172.17.0.1:9090/alarms/${alarm_id}`, {
+        const response = await fetch(`http://host.docker.internal:9090/alarms/${alarm_id}`, {
             method: 'put',
             body: JSON.stringify(body),
             headers: {
@@ -137,7 +149,7 @@ const root = {
     timers: async ({
         user_id
     }) => {
-        const response = await fetch(`http://172.17.0.1:9090/${user_id}/timers`);
+        const response = await fetch(`http://host.docker.internal:9090/${user_id}/timers`);
         const data = await response.json();
         if (data === null)
             return [{}]
@@ -149,7 +161,7 @@ const root = {
     },
     events: async () => {
         let test;
-        amqp.connect('amqp://172.17.0.1', function (error0, connection) {
+        amqp.connect('amqp://host.docker.internal', function (error0, connection) {
             if (error0) {
                 throw error0;
             }
@@ -162,9 +174,10 @@ const root = {
                 channel.assertQueue(queue, {
                     durable: false
                 });
+
                 channel.consume(queue, function reply(msg) {
 
-                    console.log("En efecto se recibió la respuesta", msg.content.toString())
+                    console.log("Mensaje recibido: ", msg.content.toString())
                     const data = JSON.stringify(msg.content.toString());
                     test = data;
 
@@ -172,15 +185,16 @@ const root = {
                         Buffer.from("events"), {
                         correlationId: msg.properties.correlationId
                     });
+                    console.log("Mensaje enviado: events")
 
                     channel.ack(msg);
                 });
             });
         });
-        console.log(test)
-        const response = await fetch('http://172.17.0.1:3000/events');
+        const response = await fetch('http://host.docker.internal:3000/events');
         const data = await response.json();
         return data.map((event_) => ({
+            id: event_.id,
             title: event_.title,
             description: event_.description,
             start: event_.start,
@@ -190,7 +204,7 @@ const root = {
         }));
     },
     createEvent: async ({ title, description, start, end, allDay, location, userId }) => {
-        amqp.connect('amqp://172.17.0.1', function (error0, connection) {
+        amqp.connect('amqp://host.docker.internal', function (error0, connection) {
             if (error0) {
                 throw error0;
             }
@@ -205,20 +219,21 @@ const root = {
                 });
                 channel.consume(queue, function reply(msg) {
 
-                    console.log("En efecto se recibió la respuesta Create", msg.content.toString())
+                    console.log(" [x] En efecto se recibió la respuesta Create", msg.content.toString())
                     
 
                     channel.sendToQueue(msg.properties.replyTo,
                         Buffer.from(JSON.stringify(body)), {
                         correlationId: msg.properties.correlationId
                     });
+                    console.log(" [x]Sent: Mensaje recibido")
 
                     channel.ack(msg);
                 });
             });
         });
         const body = { title: title, description: description, start: start, end: end, allDay: allDay, location: location, userId: userId }
-        const response = await fetch('http://172.17.0.1:3000/events', {
+        const response = await fetch('http://host.docker.internal:3000/events', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -233,7 +248,7 @@ const root = {
     deleteEvent: async ({
         event_id
     }) => {
-        const response = await fetch(`http://172.17.0.1:3000/events/${event_id}`, {
+        const response = await fetch(`http://host.docker.internal:3000/events/${event_id}`, {
             method: 'delete'
         });
         console.log(response)
@@ -253,7 +268,7 @@ const root = {
             allDay: allDay,
             location: location
         }
-        const response = await fetch(`http://172.17.0.1:3000/events/${event_id}`, {
+        const response = await fetch(`http://host.docker.internal:3000/events/${event_id}`, {
             method: 'put',
             body: JSON.stringify(body),
             headers: {

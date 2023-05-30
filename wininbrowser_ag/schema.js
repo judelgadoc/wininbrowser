@@ -6,6 +6,10 @@ const schema = buildSchema(`
     username: String
     id: Int
   }
+  type Token {
+    access_token: String
+    token_type: String
+  }
 
   type Timezone {
     name: String
@@ -23,6 +27,7 @@ const schema = buildSchema(`
   }
 
   type Event {
+    id: Int
     title: String
     description: String
     start: String
@@ -55,6 +60,7 @@ const schema = buildSchema(`
     disks: [Disk]
     foldersFromFolder(diskName: String!, route: String!): [Folder]
     filesFromFolder(diskName:String!, route: String!): [File]
+    getToken(username: String!, password: String!): Token
   }
 
   type Mutation {
