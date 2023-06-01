@@ -17,7 +17,7 @@ const root = {
         hashed_password
     }) => {
         const body = {
-            id: user_id,
+            id: parseInt(user_id),
             username: username,
             fullname: fullname,
             password: hashed_password

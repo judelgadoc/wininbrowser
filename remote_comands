@@ -2,4 +2,4 @@ scp -r -i ~/Projects/arquisoft/wininbrowser_key wininbrowser.zip judelgadoc@34.1
 zip -r wininbrowser * -x authentication/logic/__pycache__/**\* -x authentication/logic/env/**\*  -x Calendar/node_modules/**\* -x wininbrowser_ag/node_modules/**\*
 
 docker compose up -d wininbrowser_authentication_db wininbrowser_calendar_db wininbrowser_clock_db wininbrowser_mq
-docker compose up -d wininbrowser_authentication_ms wininbrowser_calendar_ms wininbrowser_clock_ms wininbrowser_ag
+docker compose up -d wininbrowser_authentication_ms wininbrowser_calendar_ms wininbrowser_clock_ms wininbrowser_ag wininbrowser_int

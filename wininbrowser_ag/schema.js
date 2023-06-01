@@ -6,6 +6,7 @@ const schema = buildSchema(`
     username: String
     id: Int
   }
+  
   type Token {
     access_token: String
     token_type: String

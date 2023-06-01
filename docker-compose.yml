@@ -96,3 +96,14 @@ services:
     extra_hosts:
     - "host.docker.internal:host-gateway"
     restart: unless-stopped
+  wininbrowser_int:
+    hostname: wininbrowser_int
+    build:
+      context: ./wininbrowser_int
+      dockerfile: Dockerfile
+    container_name: wininbrowser_int
+    ports:
+      - 55694:55694
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    restart: unless-stopped

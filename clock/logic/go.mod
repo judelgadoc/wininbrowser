@@ -1,4 +1,4 @@
-module github.com/satovarr/wininbrowser/clock
+module wininbrowser_clock_ms
 
 go 1.19
 
