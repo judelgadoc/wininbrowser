@@ -133,11 +133,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
-  wininbrowser_ma_rp:
+  wininbrowser_ag_rp:
     build:
-      context: ./wininbrowser_ma_rp
+      context: ./wininbrowser_ag_rp
       dockerfile: Dockerfile
-    container_name: wininbrowser_ma_rp
+    container_name: wininbrowser_ag_rp
     ports:
       - 31695:31695
     extra_hosts:
