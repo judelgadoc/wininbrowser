@@ -54,6 +54,18 @@ const schema = buildSchema(`
     size: Float!
   }
 
+  type ScheduledPayment{
+    UserId: Int
+    Name: String
+    CategoryId: Int
+    AccountId: Int
+    PaymentMethod: String
+    Recipient: String
+    Frequency: String
+    StartDate: String
+    NotificationTime: String
+  }
+
   type Query {
     timezones: [Timezone]
     alarms(user_id: Int!): [Alarm]
@@ -66,6 +78,7 @@ const schema = buildSchema(`
     foldersFromFolder(diskName: String!, route: String!): [Folder]
     filesFromFolder(diskName:String!, route: String!): [File]
     getToken(username: String!, password: String!): Token
+    interopWith1F: [ScheduledPayment]
   }
 
   type Mutation {

@@ -9,7 +9,7 @@ services:
     ports:
       - 55000:3306
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_clock_db:
     hostname: wininbrowser_clock_db
@@ -22,7 +22,7 @@ services:
     ports:
       - 3306:3306
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_calendar_db:
     hostname: wininbrowser_calendar_db
@@ -33,7 +33,7 @@ services:
     ports:
       - 65001:3306
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_authentication_ms:
     hostname: wininbrowser_authentication_ms
@@ -46,7 +46,7 @@ services:
     depends_on:
       - wininbrowser_authentication_db
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_clock_ms:
     hostname: wininbrowser_clock_ms
@@ -61,7 +61,7 @@ services:
     depends_on:
       - wininbrowser_clock_db
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_calendar_ms:
     hostname: wininbrowser_calendar_ms
@@ -74,7 +74,7 @@ services:
     depends_on:
       - wininbrowser_calendar_db
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_mq:
     hostname: wininbrowser_mq
@@ -83,7 +83,7 @@ services:
     ports:
       - 5672:5672
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_ag:
     hostname: wininbrowser_ag
@@ -94,7 +94,7 @@ services:
     ports:
       - 4000:4000
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
   wininbrowser_int:
     hostname: wininbrowser_int
@@ -104,6 +104,96 @@ services:
     container_name: wininbrowser_int
     ports:
       - 55694:55694
+      - 29162:29162
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
+  wininbrowser_wa:
+    hostname: wininbrowser_wa
+    build:
+      context: ../wininbrowser_frontend
+      dockerfile: Dockerfile
+    container_name: wininbrowser_wa
+    ports:
+      - 8080:8080
+    depends_on:
+      - wininbrowser_ag
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    links:
+      - wininbrowser_ag:api
+    restart: unless-stopped
+  wininbrowser_int_rp:
+    build:
+      context: ./wininbrowser_int_rp
+      dockerfile: Dockerfile
+    container_name: wininbrowser_int_rp
+    ports:
+      - 55690:55690
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+  wininbrowser_ma_rp:
+    build:
+      context: ./wininbrowser_ma_rp
+      dockerfile: Dockerfile
+    container_name: wininbrowser_ma_rp
+    ports:
+      - 31695:31695
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+  wininbrowser_wa_rp:
+    build:
+      context: ./wininbrowser_wa_rp
+      dockerfile: Dockerfile
+    container_name: wininbrowser_wa_rp
+    ports:
+      - 443:443
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+  wininbrowser_ldap:
+    image: osixia/openldap:1.1.8
+    container_name: wininbrowser_ldap
+    environment:
+      COMPOSE_HTTP_TIMEOUT: 200
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Software Architecture"
+      LDAP_DOMAIN: "wininbrowser.unal.edu.co"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_CONFIG_PASSWORD: "config"
+      LDAP_READONLY_USER: "false"
+      LDAP_BACKEND: "hdb"
+      LDAP_TLS: "true"
+      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+      LDAP_TLS_KEY_FILENAME: "ldap.key"
+      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+      LDAP_TLS_ENFORCE: "false"
+      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
+      LDAP_TLS_PROTOCOL_MIN: "3.1"
+      LDAP_TLS_VERIFY_CLIENT: "demand"
+      LDAP_REPLICATION: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+      LDAP_SSL_HELPER_PREFIX: "ldap"
+    tty: true
+    stdin_open: true
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - /container/service/slapd/assets/certs/
+    ports:
+      - "389:389"
+      - "636:636"
+    hostname: "wininbrowser.unal.edu.co"
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: wininbrowser_ldap_client
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "wininbrowser_ldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8085:80"
+    links:
+      - wininbrowser_ldap

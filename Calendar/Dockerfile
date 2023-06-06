@@ -1,5 +1,5 @@
 # Imagen base
-FROM node:latest
+FROM node:14.17.0-alpine
 
 # Establecer el directorio de trabajo
 WORKDIR /src
@@ -9,13 +9,7 @@ COPY package.json .
 COPY package-lock.json .
 
 # Instalar dependencias
-RUN npm install ts-node
-RUN npm install express
-RUN npm install -g typescript
-RUN npm install mysql2
-RUN npm install nodemon
-RUN npm install @types/body-parser
-RUN npm install @types/cors
+RUN npm install ts-node express mysql2 nodemon typescript @types/body-parser @types/cors 
 
 COPY . .
 

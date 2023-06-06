@@ -11,6 +11,7 @@ from passlib.context import CryptContext
 
 import crud, models, schemas
 from database import SessionLocal, engine
+from ldap3 import Server, Connection, ALL
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -73,16 +74,45 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     return user
 
 # Routing
+
+def search_user_ldap(uid: str):
+    server = Server('ldap://host.docker.internal', get_info=ALL)
+
+    conn = Connection(server, 'cn=admin,dc=wininbrowser,dc=unal,dc=edu,dc=co', 'admin', auto_bind=True)
+
+    search_filter = f"(uid={uid})"
+    conn.search('ou=wb,dc=wininbrowser,dc=unal,dc=edu,dc=co', search_filter, attributes=['sn', 'givenName'])
+
+    if conn.entries:
+        user_entry = conn.entries[0]
+        user_data = { 
+            'givenName': str(user_entry.givenName[0]) if 'givenName' in user_entry else None,
+            'sn': str(user_entry.sn[0]) if 'sn' in user_entry else None,
+            'message': "User found"
+        }
+        return user_data
+    else:
+        return {'message': 'User not found'}
+
+
 @app.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db)
 ):
+    ldap_response = search_user_ldap(form_data.username)
+    if ldap_response["message"] != "User found":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password (LDAP check)",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect username or password (Double check)",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

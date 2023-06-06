@@ -6,7 +6,7 @@ import (
     "log"
     "strconv"
 
-    "github.com/satovarr/wininbrowser/clock/data"
+    "wininbrowser_clock_ms/data"
     "github.com/gorilla/mux"
 )
 

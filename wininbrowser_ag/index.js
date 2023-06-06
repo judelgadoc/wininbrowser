@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require( `cors` );
+const https = require('https');
+const fs = require('fs');
 const {
     graphqlHTTP
 } = require('express-graphql');
@@ -327,6 +329,21 @@ const root = {
         else
             return "Error updating event"
     },
+    interopWith1F: async () => {
+        const response = await fetch(`http://host.docker.internal:29162`);
+        const data = await response.json();
+        return data.map((scheduledPayment) => ({
+            UserId: scheduledPayment.UserId,
+            Name: scheduledPayment.Name,
+            CategoryId: scheduledPayment.CategoryId,
+            AccountId: scheduledPayment.AccountId,
+            PaymentMethod: scheduledPayment.PaymentMethod,
+            Recipient: scheduledPayment.Recipient,
+            Frequency: scheduledPayment.Frequency,
+            StartDate: scheduledPayment.StartDate,
+            NotificationTime: scheduledPayment.NotificationTime
+        }));
+    },
     disks: async () => {
         const response = await fetch('http://172.17.0.3:8080/disk/all');
         const data = await response.json();
@@ -393,8 +410,20 @@ app.use(
     })
 );
 
+
+const options = {
+    cert: fs.readFileSync('cert.pem'),
+    key: fs.readFileSync('key.pem'),
+    rejectUnauthorized: false
+  };
+  
+  https.createServer(options, app).listen(4000, () => {
+    console.log('Server running on port 4000');
+  });
+
+/*  
 app.listen(4000, () => {
     console.log('Server running on port 4000');
 });
-
+*/
 //[{"id":1,"title":"Mi evento","description":"Descripción de mi evento","start":"2022-03-13T18:30:00.000Z","end":"2022-03-20T18:40:00.000Z","allDay":0,"location":"Mi ubicación"}]

@@ -1,5 +1,10 @@
-scp -r -i ~/Projects/arquisoft/wininbrowser_key wininbrowser.zip judelgadoc@34.122.150.214:
+scp -r -i ~/Projects/arquisoft/wininbrowser_key wininbrowser.zip judelgadoc@35.223.216.194:
 zip -r wininbrowser * -x authentication/logic/__pycache__/**\* -x authentication/logic/env/**\*  -x Calendar/node_modules/**\* -x wininbrowser_ag/node_modules/**\*
+zip -r wininbrowser_wa * -x node_modules/**\*
+rsync -av -e 'ssh -i ~/Projects/arquisoft/wininbrowser_key' --exclude='*/node_modules' --exclude='*/env' --exclude='*/.git' --exclude='*/dist' wininbrowser_frontend judelgadoc@35.223.216.194:
+rsync -av -e 'ssh -i ~/Projects/arquisoft/wininbrowser_key' --exclude='*/node_modules' --exclude='*/env' --exclude='*/.git' wininbrowser judelgadoc@35.223.216.194:
 
 docker compose up -d wininbrowser_authentication_db wininbrowser_calendar_db wininbrowser_clock_db wininbrowser_mq
-docker compose up -d wininbrowser_authentication_ms wininbrowser_calendar_ms wininbrowser_clock_ms wininbrowser_ag wininbrowser_int
+docker compose up -d wininbrowser_authentication_ms wininbrowser_calendar_ms wininbrowser_clock_ms wininbrowser_ag 
+docker compose up -d wininbrowser_int
+docker compose up -d wininbrowser_int_rp wininbrowser_ma_rp

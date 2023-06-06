@@ -12,6 +12,6 @@ WORKDIR /root/
 
 COPY --from=builder /interface .
 
-EXPOSE 55694
+EXPOSE 55694 29162
 
 CMD ["./wininbrowser_int"]

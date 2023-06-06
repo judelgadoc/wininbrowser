@@ -12,6 +12,8 @@ COPY index.js schema.js .
 RUN npm install
 
 # Copy the rest of the application files to the container
+COPY cert.pem cert.pem
+COPY key.pem key.pem
 
 
 # Expose the port that the server will run on
