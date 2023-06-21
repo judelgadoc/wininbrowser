@@ -4,7 +4,7 @@ FROM nginx:latest
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy your app.conf file to the container
-COPY app.conf /etc/nginx/conf.d/
+COPY app.conf.template /etc/nginx/conf.d/
 COPY nginx.crt /etc/nginx/nginx.crt
 COPY nginx.key /etc/nginx/nginx.key
 
@@ -12,4 +12,5 @@ COPY nginx.key /etc/nginx/nginx.key
 EXPOSE 31695
 
 # Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD envsubst '$$IP_ADDRESS' < /etc/nginx/conf.d/app.conf.template > /etc/nginx/conf.d/app.conf && nginx -g 'daemon off;'
+

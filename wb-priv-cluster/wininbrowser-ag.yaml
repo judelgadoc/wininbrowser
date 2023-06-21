@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-ag
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wininbrowser-ag
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-ag
+    spec:
+      containers:
+        - name: wininbrowser-ag
+          image: judelgadoc/wininbrowser_ag
+          ports:
+            - containerPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-ag
+spec:
+  selector:
+    app: wininbrowser-ag
+  ports:
+    - protocol: TCP
+      port: 4000
+      targetPort: 4000
+

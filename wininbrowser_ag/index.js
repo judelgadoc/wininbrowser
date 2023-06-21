@@ -24,17 +24,17 @@ const root = {
             fullname: fullname,
             password: hashed_password
         }
-        const response0 = await fetch(`http://host.docker.internal:8000/users`, {
+        const response0 = await fetch(`http://wininbrowser-authentication-ms:8000/users`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const response1 = await fetch(`http://host.docker.internal:9090/users/${user_id}`, {
+        const response1 = await fetch(`http://wininbrowser-clock-ms:9090/users/${user_id}`, {
             method: 'post',
         });
-        const response2 = await fetch(`http://host.docker.internal:3000/users/${user_id}`, {
+        const response2 = await fetch(`http://wininbrowser-calendar-ms:3000/users/${user_id}`, {
             method: 'post',
         });
         if ((response0.status === 200) && (response1.status === 200) && (response2.status === 200))
@@ -45,13 +45,13 @@ const root = {
     deleteUser: async ({
         user_id
     }) => {
-        const response0 = await fetch(`http://host.docker.internal:8000/users/${user_id}`, {
+        const response0 = await fetch(`http://wininbrowser-authentication-ms:8000/users/${user_id}`, {
             method: 'delete'
         });
-        const response1 = await fetch(`http://host.docker.internal:9090/users/${user_id}`, {
+        const response1 = await fetch(`http://wininbrowser-clock-ms:9090/users/${user_id}`, {
             method: 'delete'
         });
-        const response2 = await fetch(`http://host.docker.internal:3000/users/${user_id}`, {
+        const response2 = await fetch(`http://wininbrowser-calendar-ms:3000/users/${user_id}`, {
             method: 'delete'
         });
         if ((response0.status === 200) && (response1.status === 200) && (response2.status === 200))
@@ -60,7 +60,7 @@ const root = {
             return "Error deleting user"
     },
     getToken: async ({username, password}) => {
-        const response = await fetch(`http://host.docker.internal:8000/token`, {
+        const response = await fetch(`http://wininbrowser-authentication-ms:8000/token`, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -75,7 +75,7 @@ const root = {
         return data
     },
     users: async () => {
-        const response = await fetch(`http://host.docker.internal:8000/users`);
+        const response = await fetch(`http://wininbrowser-authentication-ms:8000/users`);
         const data = await response.json();
         if (data === null)
             return [{}]
@@ -87,12 +87,12 @@ const root = {
             }));
     },
     userById: async ( {user_id} ) => {
-        const response = await fetch(`http://host.docker.internal:8000/users/${user_id}`);
+        const response = await fetch(`http://wininbrowser-authentication-ms:8000/users/${user_id}`);
         const data = await response.json();
         return data
     },
     timezones: async () => {
-        const response = await fetch('http://host.docker.internal:9090/timezones');
+        const response = await fetch('http://wininbrowser-clock-ms:9090/timezones');
         const data = await response.json();
         return data.map((timezone) => ({
             name: timezone.name
@@ -101,7 +101,7 @@ const root = {
     alarms: async ({
         user_id
     }) => {
-        const response = await fetch(`http://host.docker.internal:9090/${user_id}/alarms`);
+        const response = await fetch(`http://wininbrowser-clock-ms:9090/${user_id}/alarms`);
         const data = await response.json();
         if (data === null)
             return [{}]
@@ -121,7 +121,7 @@ const root = {
             title: newTitle,
             time: newTime
         }
-        const response = await fetch(`http://host.docker.internal:9090/${user_id}/alarms`, {
+        const response = await fetch(`http://wininbrowser-clock-ms:9090/${user_id}/alarms`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -136,7 +136,7 @@ const root = {
     deleteAlarm: async ({
         alarm_id
     }) => {
-        const response = await fetch(`http://host.docker.internal:9090/alarms/${alarm_id}`, {
+        const response = await fetch(`http://wininbrowser-clock-ms:9090/alarms/${alarm_id}`, {
             method: 'delete'
         });
         if (response.status === 200)
@@ -153,7 +153,7 @@ const root = {
             title: newTitle,
             time: newTime
         }
-        const response = await fetch(`http://host.docker.internal:9090/alarms/${alarm_id}`, {
+        const response = await fetch(`http://wininbrowser-clock-ms:9090/alarms/${alarm_id}`, {
             method: 'put',
             body: JSON.stringify(body),
             headers: {
@@ -168,7 +168,7 @@ const root = {
     timers: async ({
         user_id
     }) => {
-        const response = await fetch(`http://host.docker.internal:9090/${user_id}/timers`);
+        const response = await fetch(`http://wininbrowser-clock-ms:9090/${user_id}/timers`);
         const data = await response.json();
         if (data === null)
             return [{}]
@@ -180,7 +180,7 @@ const root = {
     },
     events: async () => {
         let test;
-        amqp.connect('amqp://host.docker.internal', function (error0, connection) {
+        amqp.connect('amqp://wininbrowser-mq', function (error0, connection) {
             if (error0) {
                 throw error0;
             }
@@ -210,7 +210,7 @@ const root = {
                 });
             });
         });
-        const response = await fetch('http://host.docker.internal:3000/events');
+        const response = await fetch('http://wininbrowser-calendar-ms:3000/events');
         const data = await response.json();
         return data.map((event_) => ({
             id: event_.id,
@@ -223,7 +223,7 @@ const root = {
         }));
     },
     eventsByUserId: async ( {user_id} ) => {
-        const response = await fetch(`http://host.docker.internal:3000/${user_id}/events`);
+        const response = await fetch(`http://wininbrowser-calendar-ms:3000/${user_id}/events`);
         const data = await response.json();
         return data.map((event_) => ({
             id: event_.id,
@@ -236,11 +236,11 @@ const root = {
         }));
     },
     eventsByUsername: async ( {username} ) => {
-        const response0 = await fetch(`http://host.docker.internal:8000/usernames/${username}`);
+        const response0 = await fetch(`http://wininbrowser-authentication-ms:8000/usernames/${username}`);
         const data0 = await response0.json();
         console.log(data0)
         const user_id = data0.id;
-        const response1 = await fetch(`http://host.docker.internal:3000/${user_id}/events`);
+        const response1 = await fetch(`http://wininbrowser-calendar-ms:3000/${user_id}/events`);
         const data1 = await response1.json();
         return data1.map((event_) => ({
             id: event_.id,
@@ -253,7 +253,7 @@ const root = {
         }));
     },
     createEvent: async ({ title, description, start, end, allDay, location, userId }) => {
-        amqp.connect('amqp://host.docker.internal', function (error0, connection) {
+        amqp.connect('amqp://wininbrowser-mq', function (error0, connection) {
             if (error0) {
                 throw error0;
             }
@@ -282,7 +282,7 @@ const root = {
             });
         });
         const body = { title: title, description: description, start: start, end: end, allDay: allDay, location: location, userId: userId }
-        const response = await fetch('http://host.docker.internal:3000/events', {
+        const response = await fetch('http://wininbrowser-calendar-ms:3000/events', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -297,7 +297,7 @@ const root = {
     deleteEvent: async ({
         event_id
     }) => {
-        const response = await fetch(`http://host.docker.internal:3000/events/${event_id}`, {
+        const response = await fetch(`http://wininbrowser-calendar-ms:3000/events/${event_id}`, {
             method: 'delete'
         });
         console.log(response)
@@ -317,7 +317,7 @@ const root = {
             allDay: allDay,
             location: location
         }
-        const response = await fetch(`http://host.docker.internal:3000/events/${event_id}`, {
+        const response = await fetch(`http://wininbrowser-calendar-ms:3000/events/${event_id}`, {
             method: 'put',
             body: JSON.stringify(body),
             headers: {
@@ -330,7 +330,7 @@ const root = {
             return "Error updating event"
     },
     interopWith1F: async () => {
-        const response = await fetch(`http://host.docker.internal:29162`);
+        const response = await fetch(`http://wininbrowser-int:29162`);
         const data = await response.json();
         return data.map((scheduledPayment) => ({
             UserId: scheduledPayment.UserId,

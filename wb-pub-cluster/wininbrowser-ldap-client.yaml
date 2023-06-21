@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-ldap-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wininbrowser-ldap-client
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-ldap-client
+    spec:
+      containers:
+        - name: wininbrowser-ldap-client
+          image: osixia/phpldapadmin:latest
+          env:
+            - name: PHPLDAPADMIN_LDAP_HOSTS
+              value: "wininbrowser-ldap"
+            - name: PHPLDAPADMIN_HTTPS
+              value: "false"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-ldap-client
+spec:
+  selector:
+    app: wininbrowser-ldap-client
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 80
+  type: LoadBalancer

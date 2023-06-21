@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wininbrowser-ldap
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-ldap
+    spec:
+      containers:
+        - name: wininbrowser-ldap
+          image: osixia/openldap:1.1.8
+          env:
+          - name: COMPOSE_HTTP_TIMEOUT
+            value: "200"
+          - name: LDAP_LOG_LEVEL
+            value: "256"
+          - name: LDAP_ORGANISATION
+            value: "Software Architecture"
+          - name: LDAP_DOMAIN
+            value: "wininbrowser.unal.edu.co"
+          - name: LDAP_BASE_DN
+            value: ""
+          - name: LDAP_ADMIN_PASSWORD
+            value: "admin"
+          - name: LDAP_CONFIG_PASSWORD
+            value: "config"
+          - name: LDAP_READONLY_USER
+            value: "false"
+          - name: LDAP_BACKEND
+            value: "hdb"
+          - name: LDAP_REPLICATION
+            value: "false"
+          - name: LDAP_REMOVE_CONFIG_AFTER_SETUP
+            value: "true"
+          ports:
+          - containerPort: 389
+            name: ldap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-ldap
+spec:
+  selector:
+    app: wininbrowser-ldap
+  ports:
+    - protocol: TCP
+      port: 389
+      targetPort: 389
+

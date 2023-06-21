@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-ag-rp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wininbrowser-ag-rp
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-ag-rp
+    spec:
+      containers:
+        - name: wininbrowser-ag-rp
+          image: judelgadoc/wininbrowser_ag_rp
+          env:
+           - name: IP_ADDRESS
+             value: 
+          ports:
+            - containerPort: 31695
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-ag-rp
+spec:
+  selector:
+    app: wininbrowser-ag-rp
+  ports:
+    - protocol: TCP
+      port: 31695
+      targetPort: 31695
+  type: LoadBalancer

@@ -1,5 +1,10 @@
-create database wininbrowser_calendar_db;
-use wininbrowser_calendar_db;
+CREATE USER 'fredy'@'localhost' IDENTIFIED BY '12345';
+CREATE DATABASE wininbrowser_calendar_db;
+GRANT ALL PRIVILEGES ON wininbrowser_calendar_db.* TO 'fredy'@'localhost';
+FLUSH PRIVILEGES;
+
+USE wininbrowser_calendar_db;
+
 CREATE TABLE users (
   id INT NOT NULL PRIMARY KEY
 );

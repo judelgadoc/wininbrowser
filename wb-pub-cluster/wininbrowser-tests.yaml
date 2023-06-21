@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wininbrowser-tests
+spec:
+  containers:
+    - name: wininbrowser-tests
+      image: mysuername/wininbrowser_tests
+      command: ["/bin/sh"]
+      stdin: true
+      tty: true
+  restartPolicy: Never

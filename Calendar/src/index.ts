@@ -10,7 +10,7 @@ import * as amqp from 'amqplib/callback_api';
 // Configuración de la conexión a la base de datos MySQL
 const db = mysql.createPool({
     connectionLimit: 10,
-    host: 'host.docker.internal',
+    host: 'caldb',
     port: 65001,
     user: 'fredy',
     password: '12345',
@@ -40,7 +40,7 @@ function generateUuid() {
 
 function mqGetEventsClient() {
     let str : string;
-    amqp.connect('amqp://host.docker.internal', function(error0, connection) {
+    amqp.connect('amqp://wininbrowser-mq', function(error0, connection) {
         if (error0) {
             throw error0;
         }
@@ -84,7 +84,7 @@ function mqGetEventsClient() {
 }
 
 function mqCreateEventClient() {
-    amqp.connect('amqp://host.docker.internal', function(error0, connection) {
+    amqp.connect('amqp://wininbrowser-mq', function(error0, connection) {
         if (error0) {
             throw error0;
         }

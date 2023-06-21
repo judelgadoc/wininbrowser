@@ -1,0 +1,49 @@
+CREATE USER 'clock_ms'@'localhost' IDENTIFIED BY 'clock_ms12#$';
+CREATE DATABASE clock_db;
+GRANT ALL PRIVILEGES ON auth_db.* TO 'auth_ms'@'localhost';
+FLUSH PRIVILEGES;
+
+USE clock_db;
+
+CREATE TABLE clock_db.`User` (
+	id BIGINT UNSIGNED NOT NULL,
+	CONSTRAINT User_PK PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE clock_db.Alarm (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	title varchar(100) NULL,
+	`time` DATETIME NOT NULL,
+	user_id BIGINT UNSIGNED NOT NULL,
+	CONSTRAINT Alarm_PK PRIMARY KEY (id),
+	CONSTRAINT Alarm_FK FOREIGN KEY (user_id) REFERENCES clock_db.`User`(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE clock_db.Timer (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	`time` SMALLINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED NOT NULL,
+	CONSTRAINT Timer_PK PRIMARY KEY (id),
+	CONSTRAINT Timer_FK FOREIGN KEY (user_id) REFERENCES clock_db.`User`(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE clock_db.Timezone (
+	id BIGINT UNSIGNED auto_increment NOT NULL,
+	name varchar(100) NOT NULL,
+	user_id BIGINT UNSIGNED NOT NULL,
+	CONSTRAINT Timezone_PK PRIMARY KEY (id),
+	CONSTRAINT Timezone_FK FOREIGN KEY (user_id) REFERENCES clock_db.`User`(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_general_ci;
+

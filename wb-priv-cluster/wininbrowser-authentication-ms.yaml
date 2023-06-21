@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-authentication-ms
+spec:
+  selector:
+    matchLabels:
+      app: wininbrowser-authentication-ms
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-authentication-ms
+    spec:
+      containers:
+        - name: wininbrowser-authentication-ms
+          image: judelgadoc/wininbrowser_authentication_ms # Specify the Docker image for your authentication service
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-authentication-ms
+spec:
+  selector:
+    app: wininbrowser-authentication-ms
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+

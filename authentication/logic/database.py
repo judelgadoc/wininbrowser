@@ -6,7 +6,7 @@ SQLALCHEMY_DATABASE_URL = URL.create(
     "mysql+mysqldb",
     username="auth_ms",
     password="Auth_ms12#$",
-    host="172.17.0.1",
+    host="replicatedb",
     port="55000",
     database="auth_db"
 )

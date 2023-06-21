@@ -93,11 +93,12 @@ func main() {
 }
 
 func createConnection() (*sql.DB, error) {
+    log.Println(os.Getenv("DBUSER"), os.Getenv("DBPASS"), os.Getenv("DBHOST"))
     cfg := mysql.Config{
         User:   os.Getenv("DBUSER"),
         Passwd: os.Getenv("DBPASS"),
         Net:    "tcp",
-        Addr:   os.Getenv("DBHOST") + ":3306",
+        Addr:   os.Getenv("DBHOST") + ":55000",
         DBName: "clock_db",
         AllowNativePasswords: true,
     }

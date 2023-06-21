@@ -4,7 +4,7 @@ server {
     ssl_certificate_key /etc/nginx/nginx.key;
 
     location / {
-        proxy_pass https://host.docker.internal:4000;
+        proxy_pass https://$IP_ADDRESS:4000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }

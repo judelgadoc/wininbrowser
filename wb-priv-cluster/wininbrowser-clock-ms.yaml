@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-clock-ms
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wininbrowser-clock-ms
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-clock-ms
+    spec:
+      containers:
+        - name: wininbrowser-clock-ms
+          image: judelgadoc/wininbrowser_clock_ms
+          env:
+            - name: DBHOST
+              value: "dbs"
+            - name: DBUSER
+              value: clock_ms
+            - name: DBPASS
+              value: clock_ms12#$
+          ports:
+            - containerPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-clock-ms
+spec:
+  selector:
+    app: wininbrowser-clock-ms
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+
+
+
+

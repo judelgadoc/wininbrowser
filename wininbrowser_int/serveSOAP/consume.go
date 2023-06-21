@@ -27,7 +27,7 @@ type GraphQLResponse struct {
 }
 
 func GetEvents(username string) []Event {
-	endpoint := "https://host.docker.internal:4000/graphql"
+	endpoint := "https://wininbrowser-ag:4000/graphql"
 
 	query := fmt.Sprintf(`
 	{

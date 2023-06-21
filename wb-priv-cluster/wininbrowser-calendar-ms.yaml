@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wininbrowser-calendar-ms
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wininbrowser-calendar-ms
+  template:
+    metadata:
+      labels:
+        app: wininbrowser-calendar-ms
+    spec:
+      containers:
+        - name: wininbrowser-calendar-ms
+          image: judelgadoc/wininbrowser_calendar_ms
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wininbrowser-calendar-ms
+spec:
+  selector:
+    app: wininbrowser-calendar-ms
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
