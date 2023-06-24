@@ -16,8 +16,10 @@ spec:
         - name: wininbrowser-wa-rp
           image: judelgadoc/wininbrowser_wa_rp
           env:
-           - name: UPSTREAM_SERVER
-             value: 34.133.114.28
+            - name: UPSTREAM_SERVER
+              value: 34.133.114.28
+            - name: UPSTREAM_PORT
+              value: "8080"
           ports:
             - containerPort: 443
 ---

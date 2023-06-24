@@ -15,6 +15,9 @@ spec:
       containers:
         - name: wininbrowser-wa
           image: judelgadoc/wininbrowser_wa
+          env:
+            - name: AG_URI
+              value: "https://34.72.227.94:4000/graphql"
           ports:
             - containerPort: 8080
 ---

@@ -27,9 +27,11 @@ spec:
   selector:
     app: wininbrowser-int
   ports:
-    - protocol: TCP
+    - name: out
+      protocol: TCP
       port: 55694
       targetPort: 55694
-    - protocol: TCP
+    - name: in
+      protocol: TCP
       port: 29162
       targetPort: 29162

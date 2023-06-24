@@ -76,7 +76,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 # Routing
 
 def search_user_ldap(uid: str):
-    server = Server('ldap://host.docker.internal', get_info=ALL)
+    server = Server('ldap://wininbrowser-ldap', get_info=ALL)
 
     conn = Connection(server, 'cn=admin,dc=wininbrowser,dc=unal,dc=edu,dc=co', 'admin', auto_bind=True)
 
